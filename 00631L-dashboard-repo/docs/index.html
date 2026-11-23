@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>00631L 正二反彈交易 Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef1f4;--sf:#fff;--ink:#18222d;--mu:#5d6b79;--ln:#d3dae1;--ac:#2b4a7a;--ok:#1f7a5a;--wn:#b7791f;--bd:#a33b3b;--uk:#8893a0;--soft:#f5f7f9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12181f;--sf:#1a222b;--ink:#e6ebf0;--mu:#9aa8b6;--ln:#2e3945;--ac:#7fa3dc;--ok:#4bbf94;--wn:#e2a94a;--bd:#e07a7a;--uk:#7d8a97;--soft:#212b36;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12181f;--sf:#1a222b;--ink:#e6ebf0;--mu:#9aa8b6;--ln:#2e3945;--ac:#7fa3dc;--ok:#4bbf94;--wn:#e2a94a;--bd:#e07a7a;--uk:#7d8a97;--soft:#212b36;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px 14px 48px}
+h1{font-size:21px;margin:4px 0 2px}h2{font-size:17px;margin:26px 0 10px}h3{font-size:15px;margin:0}
+.mu{color:var(--mu);font-size:13px}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:16px}
+.rail{display:flex;gap:0;margin:14px 0 4px;overflow-x:auto;padding-bottom:6px}
+.stn{flex:1 0 92px;text-align:center;position:relative;font-size:12.5px;color:var(--mu)}
+.stn::before{content:"";position:absolute;top:9px;left:-50%;width:100%;height:2px;background:var(--ln)}
+.stn:first-child::before{display:none}
+.stn i{display:block;width:20px;height:20px;border-radius:50%;background:var(--sf);border:2px solid var(--ln);margin:0 auto 5px;position:relative;z-index:1}
+.stn.done i{background:var(--ac);border-color:var(--ac)}.stn.done::before{background:var(--ac)}
+.stn.on{color:var(--ink);font-weight:700}.stn.on i{background:var(--ac);border-color:var(--ac);box-shadow:0 0 0 5px color-mix(in srgb,var(--ac) 25%,transparent)}
+.stn.on::before{background:var(--ac)}
+.gauge{display:flex;gap:6px;align-items:center;margin-top:10px}
+.pip{height:12px;flex:1;max-width:90px;border-radius:3px;background:var(--ln)}.pip.f{background:var(--ok)}
+.verdict{margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--soft);border-left:4px solid var(--ac);font-weight:500}
+.verdict.go{border-color:var(--ok)}.verdict.hold{border-color:var(--wn)}
+.tabs{display:flex;gap:6px;margin:20px 0 4px;border-bottom:1px solid var(--ln)}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;font:inherit;color:var(--mu);cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--ac);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--sf);border:1px solid var(--ln);border-left:5px solid var(--uk);border-radius:8px;padding:12px}
+.card.on{border-left-color:var(--wn)}.card.key.on{border-left-color:var(--ok)}.card.stale{border-left-color:var(--bd)}
+.card h3{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.badge{font-size:12px;font-weight:500;padding:1px 8px;border-radius:99px;background:var(--soft);border:1px solid var(--ln);white-space:nowrap}
+.desc{font-size:12.5px;color:var(--mu);margin:4px 0 8px}
+.seg{display:flex;border:1px solid var(--ln);border-radius:7px;overflow:hidden;margin-bottom:8px}
+.seg button{flex:1;padding:6px 2px;background:var(--sf);border:0;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1px solid var(--ln)}.seg button[aria-pressed=true]{background:var(--ac);color:var(--sf);font-weight:700}
+.tag{font-size:11.5px;color:var(--mu);margin:6px 0 3px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+input,textarea,select{width:100%;font:inherit;font-size:13.5px;padding:6px 8px;border:1px solid var(--ln);border-radius:6px;background:var(--sf);color:var(--ink)}
+textarea{min-height:46px;resize:vertical}
+button.b{background:var(--ac);color:var(--sf);border:0;border-radius:6px;padding:7px 14px;font:inherit;cursor:pointer}
+button.b.g{background:var(--soft);color:var(--ink);border:1px solid var(--ln)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.hint{font-size:12.5px;background:var(--soft);border:1px dashed var(--ln);border-radius:6px;padding:6px 8px;margin-top:6px}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--ln)}.chk input{width:18px;margin-top:3px}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--ln);white-space:nowrap}
+.add{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.add>*{flex:1 1 110px}.add button{flex:0 0 auto}
+svg.ch{width:100%;height:auto;display:block;margin-top:6px}
+.pos{color:var(--ok)}.neg{color:var(--bd)}
+.warn{color:var(--wn);font-size:13px}
+.foot{margin-top:28px;font-size:12.5px;color:var(--mu)}
+@media (prefers-reduced-motion:no-preference){.stn i{transition:all .25s}}
+</style>
+</head>
+<body>
+<main>
+<h1>00631L 元大台灣50正2｜反彈交易 Dashboard</h1>
+<div class="mu">個人觀察與決策輔助工具。不預測底部、不保證獲利、不提供自動下單。</div>
+
+<section class="panel" style="margin-top:14px" aria-live="polite">
+  <h3>目前策略階段</h3>
+  <div id="rail"></div>
+  <div class="gauge" id="gauge"></div>
+  <div id="verdict"></div><div class="mu" id="autobar" style="margin-top:8px"></div>
+</section>
+
+<div class="tabs" role="tablist">
+  <button role="tab" data-a="tab" data-v="sig">訊號判斷</button>
+  <button role="tab" data-a="tab" data-v="data">數據與圖表</button>
+  <button role="tab" data-a="tab" data-v="trade">交易紀錄</button>
+  <button role="tab" data-a="tab" data-v="help">操作說明</button>
+</div>
+<div id="view"></div>
+
+<p class="foot">資料說明：自動資料由 GitHub Action 排程抓取公開來源（失敗時標示失敗，不補假數據），手動輸入的內容存在這個瀏覽器中；「試算提示」只是依你輸入的數據計算，與「我的判斷」分開，只有「我的判斷」會計入 2/3。至少 2/3 與櫃買連 3 日站上 60 日線為自訂規則，未經驗證。00631L 為每日正向 2 倍槓桿 ETF，長期報酬不等於指數 2 倍。</p>
+</main>
+<script>
+const K='dash631L_v1';
+const RISK=[
+ {id:'vol',n:'波動率變大',d:'日漲跌幅、盤中高低差、影線擴大；VIX 或台灣波動率指標上升。波動率高不代表底部已到。'},
+ {id:'news',n:'利多不反應',d:'好消息後仍不漲、開高走低或下跌；建議觀察多次並搭配成交量與市場廣度。'},
+ {id:'asia',n:'亞洲股市破線',d:'台、韓、日同步跌破重要均線或支撐，科技股同步弱勢。'}];
+const KEY=[
+ {id:'kr',n:'韓國去槓桿接近結束',d:'融資／槓桿大幅下降、追繳強制賣壓過高峰、利空下不再大幅破底。是間接參考，不是保證底部。'},
+ {id:'otc',n:'櫃買站穩季線',d:'收盤站回 60 日均線、連續至少 3 日在線上、季線下彎趨緩、回測不失守或快速收復。'},
+ {id:'fut',n:'外資台指期淨空單回補',d:'淨空單自高檔連續下降（非單日）；若外資現貨仍大賣，保留判斷。'}];
+const ST=['指數不再連續創新低','出現一段明顯反彈','反彈後回檔未跌破前低','低點墊高（Higher Low）','反彈時成交量／上漲家數改善','大型權值股（如台積電）不再破底'];
+const STAGES=['風險觀察','等待去槓桿','買進準備','止跌確認','可考慮進場','持有','已出場'];
+const DS={
+ otc:{t:'櫃買指數與 60 日均線',cols:[['date','日期','date'],['close','櫃買收盤','number'],['ma','60MA','number']],ser:[['close','收盤','var(--ac)'],['ma','60MA','var(--wn)']]},
+ fut:{t:'外資台指期淨空單（口）',cols:[['date','日期','date'],['net','淨空單口數','number']],ser:[['net','淨空單','var(--ac)']]},
+ kr:{t:'韓國融資／槓桿餘額',cols:[['date','日期','date'],['val','餘額（自訂單位）','number'],['note','追繳／清算備註','text']],ser:[['val','餘額','var(--ac)']]}};
+let S=load(),tab='sig',msg='',A=null;
+function load(){try{const j=localStorage.getItem(K);if(j)return JSON.parse(j)}catch(e){}return{sig:{},st:{},stDate:'',data:{otc:[],fut:[],kr:[]},trades:[],cfg:{stale:7}}}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function loadAuto(){try{fetch('data/latest.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.series){A=j;render()}}).catch(()=>{})}catch(e){}}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>(n<0?'-':'')+Math.abs(Math.round(n)).toLocaleString('en-US');
+function age(d){if(!d)return null;const x=(Date.now()-new Date(d+'T00:00:00').getTime())/864e5;return Math.floor(x)}
+function fresh(d){const a=age(d);return a!==null&&a<=(+S.cfg.stale||7)}
+function eff(s){const g=S.sig[s.id]||{};const st=g.st||'unknown';if(st==='unknown')return'unknown';if(!fresh(g.date))return'stale';return st}
+const LBL=(k,e)=>({unknown:'未知',stale:'資料過期',off:k?'未確認':'未觸發',on:k?'確認':'觸發'}[e]);
+const cnt=(L)=>L.filter(s=>eff(s)==='on').length;
+const stN=()=>fresh(S.stDate)?ST.filter((_,i)=>S.st[i]).length:0;
+const openT=()=>S.trades.find(t=>!t.ed);
+function derive(k){
+ const m=new Map();((A&&A.series&&A.series[k])||[]).forEach(x=>m.set(x.date,{...x,src:'自動'}));S.data[k].forEach(x=>m.set(x.date,{...x,src:'手動'}));
+ const r=[...m.values()].sort((a,b)=>a.date<b.date?-1:1);if(!r.length)return{rows:r,t:'尚無資料，請依來源手動輸入。'};
+ const L=r[r.length-1];
+ if(k==='otc'){const hm=x=>x.ma!=null&&x.ma!==''&&!isNaN(+x.ma);if(!hm(L))return{rows:r,t:`${L.date} 收 ${L.close}；60MA 資料不足（需累積 60 個交易日，可在 docs/data/seed_otc.csv 補歷史或手動輸入），無法判斷。`};
+  let n=0;for(let i=r.length-1;i>=0&&hm(r[i])&&r[i].close>r[i].ma;i--)n++;
+  const p=r[Math.max(0,r.length-6)];const dm=hm(p)?L.ma-p.ma:0;
+  return{rows:r,t:`${L.date} 收 ${L.close}，60MA ${L.ma}：${L.close>L.ma?'站上':'低於'}季線，連續站上 ${n} 日（建議規則 ≥3 日：${n>=3?'符合':'未達'}）；季線近 ${r.length>=6?5:r.length-1} 筆變化 ${dm>=0?'+':''}${dm.toFixed(1)}`}}
+ if(k==='fut'){let n=0;for(let i=r.length-1;i>0&&r[i].net<r[i-1].net;i--)n++;
+  const pv=r[r.length-2];const peak=Math.max(...r.map(x=>x.net));
+  return{rows:r,t:`${L.date} 淨空單 ${fmt(L.net)} 口${pv?`，較前筆${L.net<pv.net?'減少':L.net>pv.net?'增加':'持平'} ${fmt(Math.abs(L.net-pv.net))}`:''}；連續下降 ${n} 筆；距區間高點 ${fmt(L.net-peak)} 口`}}
+ const pv=r[r.length-2],peak=Math.max(...r.map(x=>x.val));
+ return{rows:r,t:`${L.date} 餘額 ${fmt(L.val)}${pv?`，較前筆 ${((L.val/pv.val-1)*100).toFixed(1)}%`:''}；距區間高點 ${((L.val/peak-1)*100).toFixed(1)}%${L.note?'；備註：'+esc(L.note):''}`}}
+function stage(){
+ const o=openT(),risk=cnt(RISK),key=cnt(KEY),sn=stN();
+ if(o)return 5;
+ if(key>=2)return sn>=ST.length?4:sn>0?3:2;
+ if(key===1)return 1;
+ if(risk>=1)return 0;
+ return S.trades.length?6:-1}
+function renderTop(){
+ const s=stage(),key=cnt(KEY),risk=cnt(RISK),sn=stN();
+ document.getElementById('rail').innerHTML='<div class="rail">'+STAGES.map((n,i)=>`<div class="stn ${i===s?'on':i<s?'done':''}"><i></i>${n}</div>`).join('')+'</div>'+(s<0?'<div class="mu">尚未進入觀察（沒有成立的風險訊號）</div>':'');
+ document.getElementById('gauge').innerHTML=[0,1,2].map(i=>`<div class="pip ${i<key?'f':''}"></div>`).join('')+`<b style="margin-left:6px">${key}/3 關鍵訊號</b><span class="mu">｜風險訊號 ${risk}/3｜止跌結構 ${sn}/${ST.length}</span>`;
+ let v,c='';
+ if(openT()){v='持有中：最多 1 張，不攤平、不追加；依你設定的停損／停利檢視。';c='go'}
+ else if(key<2){v='繼續觀察';c='hold'}
+ else if(sn<ST.length){v='進入買進準備，等待台股止跌結構';c='hold'}
+ else{v='符合策略進場條件，可自行決定尾盤買 1 張';c='go'}
+ document.getElementById('verdict').innerHTML=`<div class="verdict ${c}">${v}</div>`;
+ document.getElementById('autobar').textContent=A?`自動資料更新：${A.generated_at}（排程：台灣時間 8、10、12、18、22 點）`:'手動模式：未載入自動資料';
+}
+function sigCard(s,k){
+ const g=S.sig[s.id]||{},e=eff(s),a=age(g.date);
+ const opts=k?[['off','未確認'],['on','確認'],['unknown','未知']]:[['off','未觸發'],['on','觸發'],['unknown','未知']];
+ const hn=k?derive(s.id).t:'';
+ return `<article class="card ${k?'key':''} ${e}"><h3>${s.n}<span class="badge">${LBL(k,e)}</span></h3><p class="desc">${s.d}</p>
+ <div class="tag">我的判斷（人工）</div>
+ <div class="seg">${opts.map(([v,l])=>`<button data-a="seg" data-id="${s.id}" data-v="${v}" aria-pressed="${(g.st||'unknown')===v}">${l}</button>`).join('')}</div>
+ <div class="tag">資料（手動輸入）</div>
+ <div class="g2"><input type="date" data-f="sig.${s.id}.date" value="${esc(g.date)}" aria-label="資料日期"><input data-f="sig.${s.id}.val" placeholder="數值" value="${esc(g.val)}" aria-label="數值"></div>
+ <input style="margin-top:6px" data-f="sig.${s.id}.src" placeholder="資料來源（網址或名稱）" value="${esc(g.src)}">
+ <textarea style="margin-top:6px" data-f="sig.${s.id}.note" placeholder="判斷理由／依據">${esc(g.note)}</textarea>
+ ${e==='stale'?`<div class="warn">資料已過期${a!==null?`（${a} 天前）`:''}，不計入訊號。請更新日期與判斷。</div>`:''}
+ ${!g.date&&g.st&&g.st!=='unknown'?'<div class="warn">未填資料日期，不計入訊號。</div>':''}
+ ${k||s.id==='vol'?`<div class="hint"><b>${s.id==='vol'?'自動資料':'試算提示（依下方數據）'}：</b>${s.id==='vol'?vixTxt():hn}</div>`:''}</article>`}
+function viewSig(){
+ return `<h2>階段 A：風險訊號（只代表開始觀察，不是買進訊號）</h2><div class="cards">${RISK.map(s=>sigCard(s,0)).join('')}</div>
+ <h2>階段 B／C：關鍵反彈訊號（至少 2/3 → 買進準備）</h2><div class="cards">${KEY.map(s=>sigCard(s,1)).join('')}</div>
+ <h2>階段 D：台股止跌結構確認</h2><div class="panel"><div class="g2" style="max-width:420px;align-items:center"><span class="mu">最後檢視日期</span><input type="date" data-f="stDate" value="${esc(S.stDate)}"></div>
+ ${S.stDate&&!fresh(S.stDate)?'<div class="warn">檢視日期已過期，結構項目暫不計入。</div>':''}${!S.stDate?'<div class="warn">未填檢視日期，結構項目暫不計入。</div>':''}
+ ${ST.map((t,i)=>`<label class="chk"><input type="checkbox" data-f="st.${i}" ${S.st[i]?'checked':''}><span>${t}</span></label>`).join('')}
+ <p class="mu">若再次破前低或反彈結構破壞，取消勾選並回到觀察。示意：36,000 → 反彈 39,000 → 回檔 37,000（未破 36,000）。</p></div>
+ <h2>設定</h2><div class="panel"><div class="g2" style="max-width:420px;align-items:center"><span class="mu">資料幾天內算有效</span><input type="number" min="1" data-f="cfg.stale" value="${esc(S.cfg.stale)}"></div></div>`}
+function chart(rows,ser){
+ if(rows.length<2)return'';const W=600,H=170,P=10;const r=rows.slice(-60);
+ const vs=r.flatMap(x=>ser.map(([k])=>x[k]==null||x[k]===''?NaN:+x[k]).filter(v=>!isNaN(v)));const mn=Math.min(...vs),mx=Math.max(...vs),sp=(mx-mn)||1;
+ const X=i=>P+i*(W-2*P)/(r.length-1),Y=v=>H-P-(v-mn)/sp*(H-2*P);
+ const lines=ser.map(([k,l,c])=>`<polyline fill="none" stroke="${c}" stroke-width="2" points="${r.map((x,i)=>x[k]==null||x[k]===''?'':X(i)+','+Y(+x[k])).filter(Boolean).join(' ')}"/>`).join('');
+ return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="趨勢圖"><line x1="${P}" x2="${W-P}" y1="${H-P}" y2="${H-P}" stroke="var(--ln)"/>${lines}<text x="${P}" y="12" font-size="11" fill="var(--mu)">高 ${mx}</text><text x="${P}" y="${H-14}" font-size="11" fill="var(--mu)">低 ${mn}</text></svg><div class="mu">${ser.map(([,l,c])=>`<span style="color:${c}">━</span> ${l}`).join('　')}（最近 ${r.length} 筆）</div>`}
+function vixTxt(){const v=A&&A.series&&A.series.vix;if(!v||!v.length)return'尚無自動資料（手動模式）';const l=v[v.length-1],p=v[v.length-2];return `美國 VIX ${l.date} 收 ${l.close}`+(p?`，較前一日 ${l.close>=p.close?'+':''}${(l.close-p.close).toFixed(2)}`:'')+'。台股日內振幅與影線請自行判讀。'}
+function autoPanel(){
+ if(!A)return `<h2>自動資料</h2><div class="panel mu">尚未載入自動資料。部署到 GitHub Pages 並由排程更新後，這裡會顯示每個來源的狀態；目前為手動模式。</div>`;
+ const nm={otc:'櫃買指數',fut:'外資台指期淨空單',vix:'美國 VIX',twmargin:'台灣融資金額（仟元）'};
+ const rows=Object.keys(nm).map(k=>{const s=(A.sources||{})[k]||{},l=((A.series||{})[k]||[]).slice(-1)[0];
+  return `<tr><td>${nm[k]}</td><td>${s.ok?'成功':'<span class="neg">失敗</span>'}</td><td>${l?esc(l.date):'—'}</td><td>${l?esc(l.close??l.net??l.val??''):'—'}</td><td style="white-space:normal">${esc(s.error||'')}</td></tr>`}).join('');
+ return `<h2>自動資料（排程抓取）</h2><div class="panel"><div class="scroll"><table><tr><th>指標</th><th>最近一次抓取</th><th>資料日期</th><th>最新值</th><th>訊息</th></tr>${rows}</table></div><p class="mu">失敗時會保留舊資料並顯示原因，不會補假數據。韓國槓桿與亞洲破線沒有穩定的公開來源，維持手動。</p></div>`}
+function viewHelp(){return `<h2>操作說明</h2><div class="panel">
+<h3>每天怎麼用（約 3 分鐘）</h3>
+<ol><li>看最上方「目前策略階段」與綠色／橘色提示，了解現在是繼續觀察、買進準備，還是已符合進場條件。</li>
+<li>到「訊號判斷」：逐張卡片更新「我的判斷」（按鈕）、資料日期、數值、來源與理由。</li>
+<li>到「數據與圖表」：查看自動資料狀態；韓國槓桿等無法自動抓的資料，在表格底下的輸入列手動新增。</li>
+<li>關鍵訊號 ≥2/3 後，回「訊號判斷」逐項檢視 6 項止跌結構，填「最後檢視日期」並勾選。</li>
+<li>全部成立才顯示「符合策略進場條件」；下單前到「交易紀錄」確認停損／停利設定。</li>
+<li>買進後記錄買進；出場後記錄出場與檢討。</li></ol>
+<h3>各區塊怎麼看</h3>
+<ul><li><b>階段進度軌</b>：依你的判斷自動計算，不能手動拖動。有持有中的交易時固定為「持有」。</li>
+<li><b>訊號卡左側色條</b>：灰＝未知、橘＝風險觸發、綠＝關鍵訊號確認、紅＝資料過期。</li>
+<li><b>我的判斷</b>：唯一計入 2/3 的欄位。必須同時填資料日期，且在有效天數內（預設 7 天，可在「設定」改）。</li>
+<li><b>試算提示</b>（虛線框）：依自動／手動數據算出的參考，例如櫃買連續站上季線天數。不會自動改變你的判斷。</li>
+<li><b>圖表資料來源欄</b>：「自動」來自排程，「手動」是你輸入的；同一天兩者並存時以手動為準。只能刪除手動列。</li>
+<li><b>外資淨空單</b>：自動資料以「−(外資臺股期貨未平倉多空淨額)」表示，正數為淨空單口數。</li></ul>
+<h3>資料與備份</h3>
+<ul><li>判斷、手動數據、交易紀錄只存在你這台瀏覽器（localStorage），不會上傳到 GitHub。換裝置或清除瀏覽資料前，請到「交易紀錄」底部匯出 JSON。</li>
+<li>自動資料每天台灣時間 8、10、12、18、22 點由 GitHub Action 更新；排程可能延遲數分鐘到數十分鐘。期交所與櫃買的當日資料通常收盤後才完整，所以 18、22 點的結果最可靠。</li></ul>
+<p class="mu">本工具是個人決策輔助，不預測底部、不保證獲利、不會自動下單。</p></div>`}
+function viewData(){
+ return autoPanel()+Object.keys(DS).map(k=>{const d=DS[k],v=derive(k);
+  return `<h2>${d.t}</h2><div class="panel"><div class="hint" style="margin:0 0 6px"><b>試算：</b>${v.t}</div>${chart(v.rows,d.ser)}
+  <div class="add">${d.cols.map(([f,l,t])=>`<input id="n-${k}-${f}" type="${t}" ${t==='number'?'step="any"':''} placeholder="${l}" aria-label="${l}">`).join('')}<button class="b" data-a="addrow" data-k="${k}">新增</button></div>
+  ${v.rows.length?`<div class="scroll"><table><tr>${d.cols.map(c=>`<th>${c[1]}</th>`).join('')}<th>來源</th><th></th></tr>${[...v.rows].reverse().slice(0,8).map(x=>`<tr>${d.cols.map(c=>`<td>${esc(x[c[0]])}</td>`).join('')}<td>${x.src}</td><td>${x.src==='手動'?`<button class="b g" data-a="delrow" data-k="${k}" data-d="${x.date}">刪除</button>`:''}</td></tr>`).join('')}</table></div>`:''}</div>`}).join('')}
+function viewTrade(){
+ const o=openT(),c=S.cfg,closed=S.trades.filter(t=>t.ed);
+ const pl=t=>(t.ep-t.bp)*1000-(+t.fee||0);const tot=closed.reduce((a,t)=>a+pl(t),0),w=closed.filter(t=>pl(t)>0).length;
+ return `<h2>交易前設定</h2><div class="panel"><div class="g2"><label class="mu">最大可接受損失（元）<input type="number" data-f="cfg.maxLoss" value="${esc(c.maxLoss)}"></label><label class="mu">停損 %<input type="number" step="any" data-f="cfg.stop" value="${esc(c.stop)}"></label><label class="mu">停利 %<input type="number" step="any" data-f="cfg.take" value="${esc(c.take)}"></label></div>
+ ${(!c.maxLoss||!c.stop||!c.take)?'<p class="warn">尚有未設定項目。本策略尚未訂定固定停損／停利，請在下單前自行決定。</p>':''}
+ <p class="mu">交易資金應與生活費、備用金、0050／00919 長期配置分開。</p></div>
+ <h2>新增買進（1 張 = 1,000 股）</h2><div class="panel">${msg?`<p class="warn">${msg}</p>`:''}
+ <div class="add"><input type="date" id="t-bd" aria-label="買入日期"><input type="number" step="any" id="t-bp" placeholder="買入價" aria-label="買入價"><input id="t-re" placeholder="買進理由" style="flex:2 1 220px"><button class="b" data-a="addtrade">記錄買進</button></div>
+ <p class="mu">儲存時會自動記下當下訊號狀態：關鍵 ${cnt(KEY)}/3、結構 ${stN()}/${ST.length}。</p></div>
+ ${o?`<h2>持有中</h2><div class="panel"><b>${o.bd} 買入 ${o.bp}</b>｜${esc(o.reason)}<br><span class="mu">買入時：${o.snap}</span>
+ ${c.stop?`<br>停損參考價 ${(o.bp*(1-c.stop/100)).toFixed(2)}`:''}${c.take?`　停利參考價 ${(o.bp*(1+c.take/100)).toFixed(2)}`:''}
+ <div class="add"><input type="date" id="x-ed" aria-label="出場日期"><input type="number" step="any" id="x-ep" placeholder="出場價"><input type="number" id="x-fee" placeholder="手續費＋稅（元）"><input id="x-rv" placeholder="檢討" style="flex:2 1 200px"><button class="b" data-a="closetrade">記錄出場</button></div></div>`:''}
+ <h2>損益總覽</h2><div class="panel"><b>已結 ${closed.length} 筆｜勝率 ${closed.length?Math.round(w/closed.length*100):0}%｜累計損益 <span class="${tot>=0?'pos':'neg'}">${tot>=0?'+':''}${fmt(tot)} 元</span></b>
+ ${closed.length?`<div class="scroll"><table><tr><th>買入</th><th>價</th><th>出場</th><th>價</th><th>損益</th><th>買入時訊號</th><th>理由／檢討</th><th></th></tr>${[...closed].reverse().map(t=>`<tr><td>${t.bd}</td><td>${t.bp}</td><td>${t.ed}</td><td>${t.ep}</td><td class="${pl(t)>=0?'pos':'neg'}">${fmt(pl(t))}</td><td>${t.snap}</td><td style="white-space:normal">${esc(t.reason)}／${esc(t.review)}</td><td><button class="b g" data-a="deltrade" data-id="${t.id}">刪除</button></td></tr>`).join('')}</table></div>`:'<p class="mu">尚無已結交易。</p>'}</div>
+ <h2>備份</h2><div class="panel"><textarea id="bk" placeholder="按「匯出」取得 JSON；貼上 JSON 後按「匯入」還原"></textarea><div class="add"><button class="b g" data-a="export">匯出</button><button class="b g" data-a="import">匯入</button><button class="b g" data-a="reset">清除全部資料</button></div></div>`}
+function render(){
+ document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===tab));
+ renderTop();document.getElementById('view').innerHTML=tab==='sig'?viewSig():tab==='data'?viewData():tab==='help'?viewHelp():viewTrade()}
+function setPath(p,v){const a=p.split('.');let o=S;for(let i=0;i<a.length-1;i++)o=o[a[i]]=o[a[i]]||{};o[a[a.length-1]]=v}
+const $=id=>document.getElementById(id);
+document.addEventListener('change',e=>{const f=e.target.dataset.f;if(!f)return;setPath(f,e.target.type==='checkbox'?e.target.checked:e.target.value);save();render()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a==='tab'){tab=b.dataset.v;msg=''}
+ else if(a==='seg'){const g=S.sig[b.dataset.id]=S.sig[b.dataset.id]||{};g.st=b.dataset.v}
+ else if(a==='addrow'){const k=b.dataset.k,row={};let ok=true;DS[k].cols.forEach(([f,,t])=>{let v=$('n-'+k+'-'+f).value;if(t==='number'){v=parseFloat(v);if(isNaN(v))ok=false}else if(t==='date'&&!v)ok=false;row[f]=v});
+  if(!ok)return;S.data[k]=S.data[k].filter(x=>x.date!==row.date);S.data[k].push(row)}
+ else if(a==='delrow'){S.data[b.dataset.k]=S.data[b.dataset.k].filter(x=>x.date!==b.dataset.d)}
+ else if(a==='addtrade'){const bd=$('t-bd').value,bp=parseFloat($('t-bp').value);
+  if(openT()){msg='已有一張持有中。策略規定最多 1 張，不攤平、不追加第 2 張。'}
+  else if(!bd||isNaN(bp)){msg='請填入買入日期與買入價。'}
+  else{msg='';S.trades.push({id:Date.now(),bd,bp,reason:$('t-re').value,snap:`關鍵 ${cnt(KEY)}/3、結構 ${stN()}/${ST.length}、風險 ${cnt(RISK)}/3`})}}
+ else if(a==='closetrade'){const o=openT(),ed=$('x-ed').value,ep=parseFloat($('x-ep').value);if(!ed||isNaN(ep))return;Object.assign(o,{ed,ep,fee:parseFloat($('x-fee').value)||0,review:$('x-rv').value})}
+ else if(a==='deltrade'){S.trades=S.trades.filter(t=>t.id!=b.dataset.id)}
+ else if(a==='export'){$('bk').value=JSON.stringify(S);$('bk').select();return}
+ else if(a==='import'){try{const j=JSON.parse($('bk').value);if(!j.data||!j.trades)throw 0;S=j}catch(x){msg='匯入失敗：JSON 格式不正確。';render();return}}
+ else if(a==='reset'){if(b.dataset.sure){S={sig:{},st:{},stDate:'',data:{otc:[],fut:[],kr:[]},trades:[],cfg:{stale:7}}}else{b.dataset.sure=1;b.textContent='再按一次確認清除';return}}
+ save();render()});
+render();loadAuto();
+</script>
+</body>
+</html>
